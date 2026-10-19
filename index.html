@@ -1,0 +1,575 @@
+<title>مغناطيس الأرزاق</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Amiri+Quran&family=Aref+Ruqaa:wght@400;700&display=swap">
+<style>
+  /* Layout: one long, single-column scroll. A slim sticky bar holds the title,
+     reading progress and a text-size control. Prose first, then a hairline-separated list. */
+  :root {
+    --bg: #0c1215;
+    --bar: #0f171b;
+    --line: #223038;
+    --fg: #d3cec3;
+    --fg-strong: #ebe6da;
+    --fg-soft: #98a4a4;
+    --gold: #c8aa6e;
+    --gold-dim: #8c7747;
+    --verse: #dcc592;
+    --ink-blue: #8da3c1;
+    --fs: 21px;
+    --font-body: "Amiri", "Noto Naskh Arabic", "Traditional Arabic", serif;
+    --font-quran: "Amiri Quran", "Amiri", "Noto Naskh Arabic", serif;
+    --font-display: "Aref Ruqaa", "Amiri", serif;
+    color-scheme: dark;
+  }
+
+  /* Light reading theme: cool paper, deep ink, darker gold for contrast */
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #f2f3ef; --bar: #e9ebe6; --line: #cfd4cc;
+      --fg: #26343a; --fg-strong: #0f1c21; --fg-soft: #5a6a6c;
+      --gold: #7a5c14; --gold-dim: #a58a4a; --verse: #6b4a0e; --ink-blue: #2f4e7a;
+      color-scheme: light;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #f2f3ef; --bar: #e9ebe6; --line: #cfd4cc;
+    --fg: #26343a; --fg-strong: #0f1c21; --fg-soft: #5a6a6c;
+    --gold: #7a5c14; --gold-dim: #a58a4a; --verse: #6b4a0e; --ink-blue: #2f4e7a;
+    color-scheme: light;
+  }
+
+  .theme {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 40px;
+    padding: 0;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--fg);
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  .theme:active { background: var(--line); }
+  .theme:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .theme svg { width: 20px; height: 20px; display: block; }
+  .theme .ico-moon { display: none; }
+  :root[data-theme="light"] .theme .ico-sun { display: none; }
+  :root[data-theme="light"] .theme .ico-moon { display: block; }
+  @media (max-width: 440px) { .theme { width: 38px; } }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    direction: rtl;
+    font-family: var(--font-body);
+    font-size: var(--fs);
+    line-height: 2.1;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0 0 auto;
+    height: env(safe-area-inset-top, 0px);
+    background: var(--bar);
+    z-index: 30;
+  }
+
+  .gut {
+    max-width: 40rem;
+    margin-inline: auto;
+    padding-left: max(18px, env(safe-area-inset-left, 0px));
+    padding-right: max(18px, env(safe-area-inset-right, 0px));
+  }
+
+  /* Sticky bar */
+  .bar {
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 20;
+    background: var(--bar);
+    border-bottom: 1px solid var(--line);
+  }
+  .bar .gut {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 52px;
+  }
+  .bar-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 1.3;
+    color: var(--gold);
+    margin: 0;
+  }
+  .sizer { display: flex; gap: 6px; }
+  .sizer button {
+    appearance: none;
+    min-width: 44px;
+    height: 40px;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--fg);
+    font-family: var(--font-body);
+    border-radius: 10px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 10px;
+  }
+  .sizer button:active { background: var(--line); }
+  .sizer button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .sizer button[disabled] { opacity: .35; cursor: default; }
+  .sizer .s-small { font-size: 17px; }
+  .sizer .s-large { font-size: 26px; }
+  .progress {
+    height: 2px;
+    background: transparent;
+  }
+  .progress i {
+    display: block;
+    height: 100%;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: right center;
+  }
+
+  /* Intro */
+  main { padding-block: 28px 72px; }
+  .basmala {
+    font-family: var(--font-display);
+    font-size: 1.7em;
+    line-height: 1.7;
+    color: var(--gold);
+    text-align: center;
+    margin: 0 0 14px;
+  }
+  .intro p { margin: 0 0 0.9em; }
+  .intro strong { color: var(--fg-strong); font-weight: 700; }
+  .quran {
+    font-family: var(--font-quran);
+    color: var(--verse);
+    line-height: 2.4;
+  }
+  .src { font-size: .72em; color: var(--fg-soft); }
+
+  .title {
+    text-align: center;
+    margin: 28px 0 30px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2.3rem, 11vw, 3.2rem);
+    line-height: 1.5;
+    color: var(--gold);
+  }
+  .title span {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: .22em;
+    text-decoration-color: var(--gold-dim);
+  }
+
+  h2.lead {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 1.12em;
+    line-height: 1.8;
+    color: var(--gold);
+    margin: 0 0 6px;
+    text-wrap: balance;
+  }
+
+  /* List */
+  ul.awrad { list-style: none; margin: 0; padding: 0; }
+  ul.awrad > li {
+    position: relative;
+    padding: 14px 22px 14px 0;
+    border-top: 1px solid var(--line);
+  }
+  ul.awrad > li:first-child { border-top-color: transparent; }
+  ul.awrad > li::before {
+    content: "";
+    position: absolute;
+    right: 2px;
+    top: 1.35em;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--gold-dim);
+  }
+  ul.awrad p { margin: 0; }
+  ul.awrad .sub { margin-top: .25em; }
+  .count { color: var(--gold); }
+  .asm-label { font-weight: 700; color: var(--gold); }
+
+  /* Jump + read more */
+  .jump {
+    appearance: none;
+    height: 40px;
+    padding: 0 14px;
+    border: 1px solid var(--gold-dim);
+    background: transparent;
+    color: var(--gold);
+    font-family: var(--font-body);
+    font-size: 17px;
+    font-weight: 700;
+    border-radius: 10px;
+    cursor: pointer;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .jump:active { background: var(--line); }
+  .jump:focus-visible, .more-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .bar-actions { display: flex; align-items: center; gap: 8px; }
+  .bar-title { white-space: nowrap; }
+  @media (max-width: 440px) { .bar-title { display: none; } .bar .gut { justify-content: flex-start; } }
+  @media (max-width: 440px) {
+    .bar .gut { gap: 8px; }
+    .bar-title { font-size: 19px; }
+    .bar-actions { gap: 6px; }
+    .jump { padding: 0 10px; font-size: 16px; }
+    .sizer { gap: 4px; }
+    .sizer button { min-width: 38px; padding: 0 6px; }
+  }
+  #adhkar { scroll-margin-top: 72px; }
+  .more-btn {
+    appearance: none;
+    display: block;
+    margin: 6px auto 0;
+    min-height: 44px;
+    padding: 0 22px;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--gold);
+    font-family: var(--font-body);
+    font-size: .85em;
+    font-weight: 700;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .more-btn:active { background: var(--line); }
+  #more { margin-top: 18px; }
+
+  /* Tap counters */
+  :root { --track: #1c2a31; --ring-s: 52%; --ring-l: 58%; --done: #8fd0a0; }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) { --track: #d9ddd5; --ring-l: 38%; --done: #2e7d4f; }
+  }
+  :root[data-theme="light"] { --track: #d9ddd5; --ring-l: 38%; --done: #2e7d4f; }
+  ul.awrad > li.has-ctr { display: flex; align-items: center; gap: 14px; }
+  ul.awrad > li.has-ctr > p { flex: 1; min-width: 0; }
+  ul.awrad > li.has-ctr::before { top: 50%; transform: translateY(-50%); }
+  .ctr { display: flex; flex-direction: column; align-items: center; flex: none; }
+  .ring {
+    appearance: none;
+    position: relative;
+    width: 72px;
+    height: 72px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--fg);
+    font-family: var(--font-body);
+    cursor: pointer;
+    border-radius: 50%;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform .08s ease;
+  }
+  .ring:active { transform: scale(.94); }
+  .ring:focus-visible, .ring-reset:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+  .ring svg { width: 100%; height: 100%; display: block; transform: rotate(-90deg); }
+  .ring .track { fill: none; stroke: var(--track); stroke-width: 5; }
+  .ring .arc { fill: none; stroke-width: 5; stroke-linecap: round; transition: stroke-dashoffset .25s ease, stroke .25s ease; }
+  .ring .n {
+    position: absolute; inset: 0;
+    display: grid; place-items: center;
+    font-size: 26px; font-weight: 700; line-height: 1;
+  }
+  .ring-reset {
+    appearance: none; border: 0; background: transparent; color: var(--fg-soft);
+    font-size: 20px; line-height: 1; cursor: pointer; min-width: 44px; height: 30px; border-radius: 8px;
+  }
+  .ring-reset.off { visibility: hidden; }
+  li.done .ring .n { color: var(--done); }
+  @media (prefers-reduced-motion: reduce) { .ring, .ring .arc { transition: none; } }
+
+  /* Closing */
+  .closing {
+    margin-top: 34px;
+    padding-top: 30px;
+    border-top: 1px solid var(--line);
+    text-align: center;
+    color: var(--fg);
+  }
+  .closing p { margin: 0 0 .5em; }
+  .amin {
+    font-family: var(--font-display);
+    font-size: 1.5em;
+    color: var(--gold);
+    margin-top: .3em !important;
+  }
+  .colophon {
+    margin-top: 34px;
+    text-align: center;
+    color: var(--ink-blue);
+    font-size: .95em;
+    line-height: 2;
+  }
+  .colophon p { margin: 0; }
+  .colophon .date { unicode-bidi: isolate; }
+</style>
+<script>
+  try {
+    var t0 = localStorage.getItem('arzaq-theme');
+    document.documentElement.setAttribute('data-theme', t0 === 'light' ? 'light' : 'dark');
+  } catch (e) { document.documentElement.setAttribute('data-theme', 'dark'); }
+</script>
+
+<div class="bar">
+  <div class="gut">
+    <p class="bar-title">مغناطيس الأرزاق</p>
+    <div class="bar-actions">
+      <button type="button" id="jump" class="jump">الأذكار ↓</button>
+      <button type="button" id="theme" class="theme" aria-pressed="false" aria-label="الوضع الفاتح">
+        <svg class="ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg>
+        <svg class="ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+      </button>
+      <div class="sizer" role="group" aria-label="حجم الخط">
+        <button type="button" id="smaller" class="s-small" aria-label="تصغير الخط">أ</button>
+        <button type="button" id="larger" class="s-large" aria-label="تكبير الخط">أ</button>
+      </div>
+    </div>
+  </div>
+  <div class="progress" aria-hidden="true"><i id="bar"></i></div>
+</div>
+
+<main class="gut" dir="rtl" lang="ar">
+  <p class="basmala">بسم الله الرحمن الرحيم</p>
+
+  <section class="intro">
+    <p>الحمد لله رب العالمين الفتاح الرزاق الواسع الباسط المغني الوهاب المعطي بغير حساب، اللهم صل وسلم وشرف وكرم وعظم وأنعم وزد وبارك على عبدك ونبيك ورسولك وحبيبك سيدنا محمد الذي به عيشنا قد طاب، وآله الأنجاب وصحبه الأحباب، ما انهل مزن من أعالي السحاب وما اخضرت أرض وأخصب عيش بفيض الملك الوهاب، وبعد:</p>
+
+    <p>فيقول العبد الفقير إلى رب الناس الغني.. أحمد بن خالد بن أمين العطاس الحسيني: <strong>لما</strong> اجتاحت جائحة كورونا كرتنا الأرضية الصغيرة وحصل ما حصل من توقف في كثير من مجالات الحياة بسبب هذا الفيروس الصغير الذي لا يرى بالعين، وكان من جراء ذلك تعطل التجارات وزيادة الخسارات وفقدان كثير من الناس لوظائفهم فانقطعت المرتبات، وتبدلت الأحوال وضاق الناس ذرعا وتوقفت الأسباب الأرضية ولم يدر الناس كيف يفعلون وأضحوا في حيرة من أمرهم واتسع الخرق على الراقع ولم يعد الإنسان يعرف هل يعطي هذا أو ذاك وأصبح الكل في الحاجة سواء.. <strong>وجب</strong> اللجوء في استجلاب الأرزاق إلى الأسباب السماوية بعد شلل وتعطل الأسباب الأرضية، وكأن مولانا جل جلاله يذكرنا بما قاله لنا في رسالته التي أرسلها لنا <span class="quran">﴿وَفِي ٱلسَّمَآءِ رِزْقُكُمْ وَمَا تُوعَدُونَ ۝٢٢﴾</span><span class="src">[الذاريات]</span>.</p>
+
+    <button type="button" id="moreBtn" class="more-btn" aria-expanded="false" aria-controls="more">اقرأ المزيد</button>
+
+    <div id="more" hidden>
+
+    <p>وكأن هذه الأزمة عرفتنا ضعف البشر وضعف القدرات الأرضية، فوجب أن نلتفت معشر البشر عموما والمسلمين خصوصاً إلى الأسباب المعنوية الإيمانية السماوية وأن نتذكر القدرة الربانية وأن نعلم أن أرزاقنا بيده وحده لا بيد مخلوق غيره وأن أرزاقنا مخزونة في السماء، لكن هذه الأرزاق المحفوظة في السماء يجب أن تستجلب وتستخرج بالطريقة الملائمة، كما أن من يريد استخراج كنز من باطن الأرض فإنه يستخدم الآلات المناسبة لذلك، فأيضا هناك أسباب وأدوات ووسائل يستنزل بها الرزق من السماء الذي هو بيد الملك الوهاب جل جلاله.</p>
+
+    <p>وهذه الوسائل هي ما دلنا عليه الله في كتابه ورسوله صلى الله عليه وسلم فيما أثر عنه، فمن أراد أن يوسع الله عليه فليستخدم هذه الأسباب السماوية مع سعيه في الأسباب الأرضية.</p>
+
+    <p>وقد قصدت التيسير على أمة محمد صلى الله عليه وسلم بجمع وتلخيص ما ورد من سور وآيات وأذكار وأدعية فيها خاصية جلب الرزق وتفريج الهم والغم رجاء أن يوسع الله عليهم ويغنيهم من واسع فضله.</p>
+
+    <p>وجُل الاعتماد في ذلك على رسالة الحافظ السيوطي "حصول الرفق بأصول الرزق" وكتاب "الدعاء" للحافظ الطبراني، وليس لي في ذلك إلا مجرد الجمع والتلخيص.</p>
+
+    <p><strong>وقد جردت</strong> الأذكار والأدعية من الأحاديث والآثار بدون ذكر متن الحديث ولا تخريجه روماً لتيسير العمل بذلك.</p>
+
+    <p>ومن أراد أن يجاب طلبه ودعاؤه فليصدق في الطلب من الله فمن انقطع إلى الله كفاه كل مؤنة، وليتحرّ أوقات الإجابة وخصوصاً في آخر الليل وقت التنزل الإلهي الذي ينادي فيه الرب عباده ويعرض عليهم أن يعطيهم (هل من سائل؟ هل من داعٍ؟ هل من مستغفر؟)، وكيف يعرض عليك الملك الأجل أن تسأله ثم لا يعطيك ما سألت؟؟!!</p>
+
+    <p>وأسال الله أن يجعل هذه الرسالة سبباً في التفريج على المسلمين، وقد سميتها:</p>
+    </div>
+  </section>
+
+  <h1 class="title"><span>مغناطيس الأرزاق</span></h1>
+
+  <h2 class="lead" id="adhkar">وفيما يلي تعداد جوالب الأرزاق:</h2>
+
+  <ul class="awrad">
+    <li><p>تقوى الله في السر والعلن <span class="quran">﴿وَمَن يَتَّقِ ٱللَّهَ يَجْعَل لَّهُۥ مَخْرَجًا ۝٢ وَيَرْزُقْهُ مِنْ حَيْثُ لَا يَحْتَسِبُ ۚ وَمَن يَتَوَكَّلْ عَلَى ٱللَّهِ فَهُوَ حَسْبُهُۥٓ ۚ إِنَّ ٱللَّهَ بَـٰلِغُ أَمْرِهِۦ ۚ قَدْ جَعَلَ ٱللَّهُ لِكُلِّ شَىْءٍ قَدْرًا ۝٣﴾</span>.</p></li>
+    <li><p>سورة الفاتحة.</p></li>
+    <li><p>سورة يس.</p></li>
+    <li><p>سورة الواقعة.</p></li>
+    <li><p>سورة الإخلاص.</p></li>
+    <li><p>الحمد لله رب العالمين.</p></li>
+    <li><p>أستغفر الله العظيم <span class="count">(١٠٠)</span>.</p></li>
+    <li><p>اللهم صل على سيدنا محمد وآله وسلم.</p></li>
+    <li><p>لا إله إلا الله.</p></li>
+    <li><p>لا إله إلا أنت سبحانك إني كنت من الظالمين.</p></li>
+    <li><p>لا إله إلا الله الملك الحق المبين. <span class="count">(١٠٠)</span>.</p></li>
+    <li><p>سبحان الله وبحمده سبحان الله العظيم أستغفر الله <span class="count">(١٠٠)</span>.</p></li>
+    <li><p>حسبنا الله ونعم الوكيل.</p></li>
+    <li><p>لا حول ولا قوة إلا بالله.</p></li>
+    <li><p>بسم الله على نَفسي ومالي وديني، اللهمَّ رضِّني بقضائك، وبارك لي فيما قدَّرتَ؛ حتى لا أحبَّ تعجيل ما أخَّرتَ، ولا تأخير ما عجَّلتَ.</p></li>
+    <li><p>اللَّهُمَّ إِنَّكَ تَعْلَمُ سَرِيرَتِي، وَعَلَانِيَتِي فَاقْبَلْ مَعْذِرَتِي، وَتَعْلَمُ حَاجَتِي فَأَعْطِنِي سُؤْلِي، وَتَعْلَمُ مَا فِي نَفْسِي فَاغْفِرْ لِي ذَنْبِي، اللَّهُمَّ إِنِّي أَسْأَلُكَ إِيمَانًا يُبَاشِرُ قَلْبِي، وَيَقِينًا صَادِقًا حَتَّى أَعْلَمَ أَنَّهُ لَا يُصِيبُنِي إِلَّا مَا كَتَبْتَ لِي، وَرِضًا بِمَا قَسَمْتَ لِي.</p></li>
+    <li><p>اللهمَّ اجعل أوسَع رزقك عليَّ عند كبر سِنّي وانقضاء عمري.</p></li>
+    <li><p>اللهمَّ إنّي أسألك رِزقًا طيِّبًا، وعلمًا نافعًا، وعملًا متقبلًا.</p></li>
+    <li><p>اللهمَّ احفَظني بالإسلام قاعدًا، واحفظني بالإسلام راقدًا، ولا تطمع فيَّ عدوًّا ولا حاسدًا، وأعوذ بك من شرِّ ما أنت آخِذ بناصيته، وأسألك من الخير الذي بيدك.</p></li>
+    <li><p>اللهمَّ اغفِر لي ذنبي، وطيِّب لي كَسبي، ووسِّع لي في خُلُقي، ولا تمنعني ممَّا قضيتَ لي، ولا تُذهب نفسي إلى شيء صرفتَه عنّي.</p></li>
+    <li><p>اللهمَّ فارِج الهمِّ، كاشِف الكربِ، مجيبَ دعوة المضطر، رحمن الدنيا والآخرة ورحيمها، أنت رحماني - وفي لفظ: أنت ترحمني - فارحمني رحمةً تغنيني بها عن رحمة مَن سواك.</p></li>
+    <li><p>اللهمَّ إنّي أعوذ بك من الكَسَل، وأعوذ بك من البخل والجبن، وأعوذ بك من غَلَبة الدَّين وقهر الرجال.</p></li>
+    <li><p>اللهمَّ اكفِني بحلالك عن حَرامك، وأغنِني بفضلك عمَّن سواك.</p></li>
+    <li><p>يا أول الأوَّلين، ويا آخِر الآخرين، ويا ذا القوَّة المتين، ويا راحم المساكين، ويا أرحم الراحمين.</p></li>
+    <li><p>اللهمَّ ربَّ السموات السَّبع ورب العرش العظيم، ربَّ كلِّ شيء، منزل التوراة والإنجيل والزبور والفرقان، فالق الحبِّ والنوى، أعوذ بك من شرِّ كلِّ شيء أنت آخِذ بناصيته، اللهمَّ أنت الأول فليس قبلك شَيء، وأنت الآخِر فليس بعدك شيء، وأنت الباطن فليس دونك شيء، اقض عنَّا الدَّين، وأغنِنا من الفقر.</p></li>
+    <li><p>اللهمَّ اقذف في قلبي رجاءك، واقطع رجائي عمَّن سِواك، حتى لا أرجو أحدًا غيرك، اللهمَّ وما ضعفَت عنه قوَّتي، وقصر عنه عمَلي، ولم تنتهِ إليه رغبتي، ولم تبلغه مسألتي، ولم يجرِ على لساني - ما أعطيتَ أحدًا من الأولين والآخرين من اليَقين، فخصَّني به يا رب العالمين.</p></li>
+    <li><p>لَا إِلَهَ إِلا اللَّهُ الْعَلِيُّ الْعَظِيمُ، لَا إِلَهَ إِلا اللَّهُ رَبُّ الْعَرْشِ الْعَظِيمُ، لَا إِلَهَ إِلا اللَّهُ رَبُّ السَّمَوَاتِ، وَرَبُّ الأَرْضِ وَرَبُّ الْعَرْشِ الْكَرِيمُ.</p></li>
+    <li><p>لاَ إِلَهَ إِلاَّ اللَّهُ الْكَرِيمُ الْحَلِيمُ ، سُبْحَانهُ ، وَتَبَارَكَ اللَّهُ رَبُّ الْعَرْشِ الْعَظِيمِ ، وَالْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ.</p></li>
+    <li><p>لا إله إلا الله وحده لا شريك له العلي العظيم ، لا إله إلا الله وحده لا شريك له الحليم الكريم.</p></li>
+    <li><p>لا إله إلا الله العلي العظيم ، لا إله إلا الله الحليم الكريم ، سبحان الله رب السموات السبع ورب العرش العظيم ، والحمد لله رب العالمين.</p></li>
+    <li><p>لا إله إلا الله الحليم الكريم ، سبحان الله رب العرش العظيم ، الحمد لله رب العالمين ، اللهم ارحمني ، اللهم تجاوز عني، اللهم اعف عني ، فإنك غفور رحيم.</p></li>
+    <li><p>اللهم إني أسألك بلا إله إلا أنت الحليم الكريم ، سبحان الله رب العرش الكريم أن تغفر لي.</p></li>
+    <li><p>لا إله إلا الله الحليم العظيم ، لا إله إلا الله رب العرش العظيم ، لا إله إلا الله رب العرش الكريم ، لا إله إلا الله رب السموات ورب الأرض رب العرش العظيم.</p></li>
+    <li><p>الله ربي لا أشرك به شيئا <span class="count">(٧)</span>.</p></li>
+    <li><p>اللهم رحمتك أرجو ، فلا تكلني إلى نفسي طرفة عين ، وأصلح لي شأني كله لا إله إلا أنت.</p></li>
+    <li><p>يا مالك يوم الدين ، إياك أعبد وإياك أستعين.</p></li>
+    <li><p>اللهم إني عبدك وابن عبدك وابن أمتك ناصيتي بيدك، ماض في حكمك، عدل في قضاؤك، أسألك بكل اسم هو لك، سميت به نفسك أو أنزلته في كتابك، أو علمته أحدا من خلقك أو استأثرت به في علم الغيب عندك أن تجعل القرآن ربيع قلبي، ونور بصري، وجلاء حزني، وذهاب همي.</p></li>
+    <li><p>اللهم إليك أشكو ضعف قوتي ، وقلة حيلتي ، وهواني على الناس ، أرحم الراحمين ، أنت أرحم الراحمين ، إلى من تكلني، إلى عدو يتجهمني أو إلى قريب ملكته أمري ، إن لم تكن غضبان علي فلا أبالي، غير أن عافيتك أوسع لي ، أعوذ بنور وجهك الذي أشرقت له الظلمات ، وصلح عليه أمر الدنيا والآخرة ، أن تنزل بي غضبك أو تحل علي سخطك ، لك العتبى حتى ترضى ، ولا حول ولا قوة إلا بك.</p></li>
+    <li><p>حسبي الله لا إله إلا هو عليه توكلت وهو رب العرش العظيم <span class="count">(٧)</span>.</p></li>
+    <li><p>اللهم أنت ثقتي في كل كرب وأنت رجائي في كل شدة وأنت لي في كل أمر نزل بي ثقةٌ وعُدة ، فكم من كرب قد يضعف عنه الفؤاد ، وتقل فيه الحيلة ، ويرغب عنه الصديق ، ويشمت به العدو ، أنزلته بك وشكوته إليك ففرجته وكشفته وكفيتنيه ، فأنت صاحب كل حاجة ، وولي كل نعمة ، وأنت الذي حفظت الغلام بصلاح أبويه ، فاحفظني بما حفظته به ، ولا تجعلني فتنة للقوم الظالمين ، اللهم وأسألك بكل اسم هو لك سميته في كتابك ، أو علمته أحدا من خلقك أو استأثرت به في علم الغيب عندك ، وأسألك بالاسم الأعظم الأعظم الأعظم الذي إذا سئلت به كان حقا عليك أن تجيب ، أن تصلي على محمد وعلى آل محمد ، وأن تقضي حاجتي.</p></li>
+    <li><p>لا إله إلا الله وحده لا شريك له العلي العظيم ، لا إله إلا الله وحده لا شريك له الحليم الكريم ، بسم الله الذي لا إله إلا هو الحي الحليم ، سبحان رب العرش العظيم ، والحمد لله رب العالمين (كأنهم يوم يرون ما يوعدون لم يلبثوا إلا ساعة من نهار بلاغ فهل يهلك إلا القوم الفاسقون) (كأنهم يوم يرونها لم يلبثوا إلا عشية أو ضحاها)، اللهم إني أسألك موجبات رحمتك ، وعزائم مغفرتك ، والغنيمة من كل بر ، والسلامة من كل ذنب ، اللهم لا تدع لنا ذنبا إلا غفرته ، ولا هما إلا فرجته ، ولا دينا إلا قضيته ، ولا حاجة من حوائج الدنيا والآخرة إلا قضيتها برحمتك يا أرحم الراحمين.</p></li>
+    <li><p>توكلت على الحي الذي لا يموت، والحمد لله الذي لم يتخذ ولدا ولم يكن له شريك في الملك ولم يكن له ولي من الذل وكبره تكبيرا.</p></li>
+    <li><p>يا حي يا قيوم برحمتك أستغيث أصلح لي شأني كله ، ولا تكلني إلى أحد من الناس ولا إلى نفسي طرفة عين.</p></li>
+    <li><p>اللهم رب السموات السبع ورب العرش العظيم ، اقض عنا الدين وأغننا من الفقر.</p></li>
+    <li>
+      <p class="asm-label">الاسم الأعظم:</p>
+      <p class="sub">اللَّهُمَّ إِنِّي أَسْأَلُكَ بِأَنَّ لَكَ الْحَمْدَ، لَا إِلَهَ إِلَّا أَنْتَ الحنان الْمَنَّانُ بَدِيعُ السَّمَاوَاتِ وَالْأَرْضِ، يَا ذَا الْجَلَالِ وَالْإِكْرَامِ، يَا حَيُّ يَا قَيُّومُ.</p>
+      <p class="sub">اللَّهُمَّ إِنِّي أَسْأَلُكَ بِأَنِّي أَشْهَدُ أَنَّكَ أَنْتَ اللَّهُ لَا إِلَهَ إِلَّا أَنْتَ الْأَحَدُ الصَّمَدُ الَّذِي لَمْ يَلِدْ وَلَمْ يُولَدْ وَلَمْ يَكُنْ لَهُ كُفُوًا أَحَدٌ .</p>
+    </li>
+  </ul>
+
+  <section class="closing">
+    <p>أن تتقبل منا جميع ما دعوناك وطلبناك ورجوناك وما ندعوك على ما تحب وترضى في خير ولطف وعفو وعافية.</p>
+    <p>وصلى الله وسلم وبارك على عبده ورسوله سيدنا محمد وآله وصحبه أجمعين</p>
+    <p>سبحان ربك رب العزة عما يصفون وسلام على المرسلين والحمد لله رب العالمين</p>
+    <p class="amin">آمين</p>
+  </section>
+
+  <footer class="colophon">
+    <p>وكتبه/ أحمد بن خالد بن أمين العطاس الهاشمي الحسيني المكي</p>
+    <p><bdi class="date">١٤٤٢/٥/١٥هـ</bdi></p>
+  </footer>
+</main>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var MIN = 17, MAX = 32, STEP = 2, DEF = 21;
+  var size = DEF;
+  try {
+    var saved = parseInt(localStorage.getItem('arzaq-fs'), 10);
+    if (saved >= MIN && saved <= MAX) size = saved;
+  } catch (e) {}
+  var smaller = document.getElementById('smaller');
+  var larger = document.getElementById('larger');
+  var bar = document.getElementById('bar');
+
+  function apply() {
+    root.style.setProperty('--fs', size + 'px');
+    smaller.disabled = size <= MIN;
+    larger.disabled = size >= MAX;
+    try { localStorage.setItem('arzaq-fs', String(size)); } catch (e) {}
+    update();
+  }
+  smaller.addEventListener('click', function () { size = Math.max(MIN, size - STEP); apply(); });
+  larger.addEventListener('click', function () { size = Math.min(MAX, size + STEP); apply(); });
+
+  var themeBtn = document.getElementById('theme');
+  function setTheme(t, save) {
+    root.setAttribute('data-theme', t);
+    themeBtn.setAttribute('aria-pressed', t === 'light' ? 'true' : 'false');
+    themeBtn.setAttribute('aria-label', t === 'light' ? 'الوضع الداكن' : 'الوضع الفاتح');
+    if (save) { try { localStorage.setItem('arzaq-theme', t); } catch (e) {} }
+  }
+  setTheme(root.getAttribute('data-theme') === 'light' ? 'light' : 'dark', false);
+  themeBtn.addEventListener('click', function () {
+    setTheme(root.getAttribute('data-theme') === 'light' ? 'dark' : 'light', true);
+  });
+
+  var moreBtn = document.getElementById('moreBtn');
+  var more = document.getElementById('more');
+  moreBtn.addEventListener('click', function () {
+    var open = more.hidden;
+    more.hidden = !open;
+    moreBtn.textContent = open ? 'إخفاء' : 'اقرأ المزيد';
+    moreBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    update();
+  });
+  document.getElementById('jump').addEventListener('click', function () {
+    var calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document.getElementById('adhkar').scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'start' });
+  });
+
+  /* Tap counters for adhkar with a number in parentheses */
+  (function () {
+    var AR = '٠١٢٣٤٥٦٧٨٩';
+    function ar(x) { return String(x).replace(/\d/g, function (d) { return AR[d]; }); }
+    function parse(s) {
+      var o = '';
+      for (var i = 0; i < s.length; i++) {
+        var k = AR.indexOf(s[i]);
+        if (k > -1) o += k; else if (/\d/.test(s[i])) o += s[i];
+      }
+      return parseInt(o, 10);
+    }
+    function color(p) {
+      var h = p < 0.5 ? 14 + 28 * (p / 0.5) : 42 + 98 * ((p - 0.5) / 0.5);
+      return 'hsl(' + h.toFixed(0) + ' var(--ring-s) var(--ring-l))';
+    }
+    var C = 2 * Math.PI * 32;
+    var rows = document.querySelectorAll('ul.awrad > li');
+    for (var i = 0; i < rows.length; i++) (function (li, i) {
+      var c = li.querySelector('.count');
+      if (!c) return;
+      var total = parse(c.textContent);
+      if (!total) return;
+      var key = 'arzaq-c-' + i, n = 0;
+      try { var v = parseInt(localStorage.getItem(key), 10); if (v >= 0 && v <= total) n = v; } catch (e) {}
+      li.classList.add('has-ctr');
+      var box = document.createElement('div');
+      box.className = 'ctr';
+      box.innerHTML =
+        '<button type="button" class="ring">' +
+          '<svg viewBox="0 0 76 76" aria-hidden="true"><circle class="track" cx="38" cy="38" r="32"/><circle class="arc" cx="38" cy="38" r="32" stroke-dasharray="' + C + '"/></svg>' +
+          '<span class="n" aria-hidden="true"></span>' +
+        '</button>' +
+        '<button type="button" class="ring-reset" aria-label="إعادة العداد">↺</button>';
+      li.appendChild(box);
+      var ring = box.querySelector('.ring'), arc = box.querySelector('.arc'), num = box.querySelector('.n'), rs = box.querySelector('.ring-reset');
+      function draw() {
+        var p = n / total;
+        arc.style.strokeDashoffset = C * (1 - p);
+        arc.style.stroke = color(p);
+        num.textContent = ar(n);
+        ring.setAttribute('aria-label', 'العدّ ' + ar(n) + ' من ' + ar(total));
+        rs.classList.toggle('off', n === 0);
+        li.classList.toggle('done', n >= total);
+      }
+      function save() { try { localStorage.setItem(key, String(n)); } catch (e) {} }
+      function buzz(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} }
+      ring.addEventListener('click', function () {
+        if (n >= total) return;
+        n++; draw(); save();
+        buzz(n >= total ? 40 : 10);
+      });
+      rs.addEventListener('click', function () { n = 0; draw(); save(); });
+      draw();
+    })(rows[i], i);
+  })();
+
+  var ticking = false;
+  function update() {
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    var p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+    bar.style.transform = 'scaleX(' + p + ')';
+    ticking = false;
+  }
+  window.addEventListener('scroll', function () {
+    if (!ticking) { ticking = true; requestAnimationFrame(update); }
+  }, { passive: true });
+  window.addEventListener('resize', update);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(update);
+  apply();
+})();
+</script>
