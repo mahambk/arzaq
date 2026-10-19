@@ -22,7 +22,7 @@
     --gold-dim: #8c7747;
     --verse: #dcc592;
     --ink-blue: #8da3c1;
-    --fs: 21px;
+    --fs: 19px;
     --font-body: "Amiri", "Noto Naskh Arabic", "Traditional Arabic", serif;
     --font-quran: "Amiri Quran", "Amiri", "Noto Naskh Arabic", serif;
     --font-display: "Aref Ruqaa", "Amiri", serif;
@@ -219,32 +219,13 @@
   .asm-label { font-weight: 700; color: var(--gold); }
 
   /* Jump + read more */
-  .jump {
-    appearance: none;
-    height: 40px;
-    padding: 0 14px;
-    border: 1px solid var(--gold-dim);
-    background: transparent;
-    color: var(--gold);
-    font-family: var(--font-body);
-    font-size: 17px;
-    font-weight: 700;
-    border-radius: 10px;
-    cursor: pointer;
-    line-height: 1;
-    white-space: nowrap;
-  }
-  .jump:active { background: var(--line); }
-  .jump:focus-visible, .more-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-  .bar-actions { display: flex; align-items: center; gap: 8px; }
+  .more-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .bar-actions { display: flex; align-items: center; gap: 12px; }
   .bar-title { white-space: nowrap; }
-  @media (max-width: 440px) { .bar-title { display: none; } .bar .gut { justify-content: flex-start; } }
+  .sizer { gap: 8px; }
   @media (max-width: 440px) {
     .bar .gut { gap: 8px; }
-    .bar-title { font-size: 19px; }
-    .bar-actions { gap: 6px; }
-    .jump { padding: 0 10px; font-size: 16px; }
-    .sizer { gap: 4px; }
+    .bar-title { font-size: 20px; }
     .sizer button { min-width: 38px; padding: 0 6px; }
   }
   #adhkar { scroll-margin-top: 72px; }
@@ -360,7 +341,6 @@
   <div class="gut">
     <p class="bar-title">مغناطيس الأرزاق</p>
     <div class="bar-actions">
-      <button type="button" id="jump" class="jump">الأذكار ↓</button>
       <button type="button" id="theme" class="theme" aria-pressed="false" aria-label="الوضع الفاتح">
         <svg class="ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg>
         <svg class="ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
@@ -380,11 +360,11 @@
   <section class="intro">
     <p>الحمد لله رب العالمين الفتاح الرزاق الواسع الباسط المغني الوهاب المعطي بغير حساب، اللهم صل وسلم وشرف وكرم وعظم وأنعم وزد وبارك على عبدك ونبيك ورسولك وحبيبك سيدنا محمد الذي به عيشنا قد طاب، وآله الأنجاب وصحبه الأحباب، ما انهل مزن من أعالي السحاب وما اخضرت أرض وأخصب عيش بفيض الملك الوهاب، وبعد:</p>
 
-    <p>فيقول العبد الفقير إلى رب الناس الغني.. أحمد بن خالد بن أمين العطاس الحسيني: <strong>لما</strong> اجتاحت جائحة كورونا كرتنا الأرضية الصغيرة وحصل ما حصل من توقف في كثير من مجالات الحياة بسبب هذا الفيروس الصغير الذي لا يرى بالعين، وكان من جراء ذلك تعطل التجارات وزيادة الخسارات وفقدان كثير من الناس لوظائفهم فانقطعت المرتبات، وتبدلت الأحوال وضاق الناس ذرعا وتوقفت الأسباب الأرضية ولم يدر الناس كيف يفعلون وأضحوا في حيرة من أمرهم واتسع الخرق على الراقع ولم يعد الإنسان يعرف هل يعطي هذا أو ذاك وأصبح الكل في الحاجة سواء.. <strong>وجب</strong> اللجوء في استجلاب الأرزاق إلى الأسباب السماوية بعد شلل وتعطل الأسباب الأرضية، وكأن مولانا جل جلاله يذكرنا بما قاله لنا في رسالته التي أرسلها لنا <span class="quran">﴿وَفِي ٱلسَّمَآءِ رِزْقُكُمْ وَمَا تُوعَدُونَ ۝٢٢﴾</span><span class="src">[الذاريات]</span>.</p>
-
     <button type="button" id="moreBtn" class="more-btn" aria-expanded="false" aria-controls="more">اقرأ المزيد</button>
 
     <div id="more" hidden>
+
+    <p>فيقول العبد الفقير إلى رب الناس الغني.. أحمد بن خالد بن أمين العطاس الحسيني: <strong>لما</strong> اجتاحت جائحة كورونا كرتنا الأرضية الصغيرة وحصل ما حصل من توقف في كثير من مجالات الحياة بسبب هذا الفيروس الصغير الذي لا يرى بالعين، وكان من جراء ذلك تعطل التجارات وزيادة الخسارات وفقدان كثير من الناس لوظائفهم فانقطعت المرتبات، وتبدلت الأحوال وضاق الناس ذرعا وتوقفت الأسباب الأرضية ولم يدر الناس كيف يفعلون وأضحوا في حيرة من أمرهم واتسع الخرق على الراقع ولم يعد الإنسان يعرف هل يعطي هذا أو ذاك وأصبح الكل في الحاجة سواء.. <strong>وجب</strong> اللجوء في استجلاب الأرزاق إلى الأسباب السماوية بعد شلل وتعطل الأسباب الأرضية، وكأن مولانا جل جلاله يذكرنا بما قاله لنا في رسالته التي أرسلها لنا <span class="quran">﴿وَفِي ٱلسَّمَآءِ رِزْقُكُمْ وَمَا تُوعَدُونَ ۝٢٢﴾</span><span class="src">[الذاريات]</span>.</p>
 
     <p>وكأن هذه الأزمة عرفتنا ضعف البشر وضعف القدرات الأرضية، فوجب أن نلتفت معشر البشر عموما والمسلمين خصوصاً إلى الأسباب المعنوية الإيمانية السماوية وأن نتذكر القدرة الربانية وأن نعلم أن أرزاقنا بيده وحده لا بيد مخلوق غيره وأن أرزاقنا مخزونة في السماء، لكن هذه الأرزاق المحفوظة في السماء يجب أن تستجلب وتستخرج بالطريقة الملائمة، كما أن من يريد استخراج كنز من باطن الأرض فإنه يستخدم الآلات المناسبة لذلك، فأيضا هناك أسباب وأدوات ووسائل يستنزل بها الرزق من السماء الذي هو بيد الملك الوهاب جل جلاله.</p>
 
@@ -474,10 +454,10 @@
 <script>
 (function () {
   var root = document.documentElement;
-  var MIN = 17, MAX = 32, STEP = 2, DEF = 21;
+  var MIN = 17, MAX = 32, STEP = 2, DEF = 19;
   var size = DEF;
   try {
-    var saved = parseInt(localStorage.getItem('arzaq-fs'), 10);
+    var saved = parseInt(localStorage.getItem('arzaq-fs2'), 10);
     if (saved >= MIN && saved <= MAX) size = saved;
   } catch (e) {}
   var smaller = document.getElementById('smaller');
@@ -488,11 +468,11 @@
     root.style.setProperty('--fs', size + 'px');
     smaller.disabled = size <= MIN;
     larger.disabled = size >= MAX;
-    try { localStorage.setItem('arzaq-fs', String(size)); } catch (e) {}
     update();
   }
-  smaller.addEventListener('click', function () { size = Math.max(MIN, size - STEP); apply(); });
-  larger.addEventListener('click', function () { size = Math.min(MAX, size + STEP); apply(); });
+  function saveSize() { try { localStorage.setItem('arzaq-fs2', String(size)); } catch (e) {} }
+  smaller.addEventListener('click', function () { size = Math.max(MIN, size - STEP); apply(); saveSize(); });
+  larger.addEventListener('click', function () { size = Math.min(MAX, size + STEP); apply(); saveSize(); });
 
   var themeBtn = document.getElementById('theme');
   function setTheme(t, save) {
@@ -514,10 +494,6 @@
     moreBtn.textContent = open ? 'إخفاء' : 'اقرأ المزيد';
     moreBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
     update();
-  });
-  document.getElementById('jump').addEventListener('click', function () {
-    var calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    document.getElementById('adhkar').scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'start' });
   });
 
   /* Tap counters for adhkar with a number in parentheses */
