@@ -269,6 +269,9 @@
   :root[data-theme="light"] { --track: #d9ddd5; --ring-l: 38%; --done: #2e7d4f; }
   ul.awrad > li.has-ctr { display: flex; align-items: center; gap: 14px; }
   ul.awrad > li.has-ctr > p { flex: 1; min-width: 0; }
+  ul.awrad > li.has-ctr { cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+  ul.awrad > li.has-ctr:active .ring { transform: scale(.94); }
+  ul.awrad > li.has-ctr.done { cursor: default; }
   ul.awrad > li.has-ctr::before { top: 50%; transform: translateY(-50%); }
   .ctr { display: flex; flex-direction: column; align-items: center; flex: none; }
   .ring {
@@ -296,6 +299,8 @@
     position: absolute; inset: 0;
     display: grid; place-items: center;
     font-size: 26px; font-weight: 700; line-height: 1;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-variant-numeric: tabular-nums;
   }
   .ring-reset {
     appearance: none; border: 0; background: transparent; color: var(--fg-soft);
@@ -541,19 +546,22 @@
         var p = n / total;
         arc.style.strokeDashoffset = C * (1 - p);
         arc.style.stroke = color(p);
-        num.textContent = ar(n);
-        ring.setAttribute('aria-label', 'العدّ ' + ar(n) + ' من ' + ar(total));
+        num.textContent = String(n);
+        ring.setAttribute('aria-label', 'العدّ ' + n + ' من ' + total);
         rs.classList.toggle('off', n === 0);
         li.classList.toggle('done', n >= total);
       }
       function save() { try { localStorage.setItem(key, String(n)); } catch (e) {} }
       function buzz(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} }
-      ring.addEventListener('click', function () {
+      li.addEventListener('click', function (e) {
+        if (e.target.closest('.ring-reset')) return;
+        var sel = window.getSelection ? window.getSelection().toString() : '';
+        if (sel) return;
         if (n >= total) return;
         n++; draw(); save();
         buzz(n >= total ? 40 : 10);
       });
-      rs.addEventListener('click', function () { n = 0; draw(); save(); });
+      rs.addEventListener('click', function (e) { e.stopPropagation(); n = 0; draw(); save(); });
       draw();
     })(rows[i], i);
   })();
