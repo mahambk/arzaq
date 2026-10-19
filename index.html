@@ -269,7 +269,7 @@
   :root[data-theme="light"] { --track: #d9ddd5; --ring-l: 38%; --done: #2e7d4f; }
   ul.awrad > li.has-ctr { display: flex; align-items: center; gap: 14px; }
   ul.awrad > li.has-ctr > p { flex: 1; min-width: 0; }
-  ul.awrad > li.has-ctr { cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+  ul.awrad > li.has-ctr { cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
   ul.awrad > li.has-ctr:active .ring { transform: scale(.94); }
   ul.awrad > li.has-ctr.done { cursor: default; }
   ul.awrad > li.has-ctr::before { top: 50%; transform: translateY(-50%); }
@@ -555,8 +555,6 @@
       function buzz(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} }
       li.addEventListener('click', function (e) {
         if (e.target.closest('.ring-reset')) return;
-        var sel = window.getSelection ? window.getSelection().toString() : '';
-        if (sel) return;
         if (n >= total) return;
         n++; draw(); save();
         buzz(n >= total ? 40 : 10);
