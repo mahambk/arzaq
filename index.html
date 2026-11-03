@@ -519,8 +519,8 @@
       if (!c) return;
       var total = parse(c.textContent);
       if (!total) return;
-      var key = 'arzaq-c-' + i, n = 0;
-      try { var v = parseInt(localStorage.getItem(key), 10); if (v >= 0 && v <= total) n = v; } catch (e) {}
+      var n = 0;
+      try { localStorage.removeItem('arzaq-c-' + i); } catch (e) {}
       li.classList.add('has-ctr');
       var box = document.createElement('div');
       box.className = 'ctr';
@@ -541,15 +541,14 @@
         rs.classList.toggle('off', n === 0);
         li.classList.toggle('done', n >= total);
       }
-      function save() { try { localStorage.setItem(key, String(n)); } catch (e) {} }
       function buzz(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} }
       li.addEventListener('click', function (e) {
         if (e.target.closest('.ring-reset')) return;
         if (n >= total) return;
-        n++; draw(); save();
+        n++; draw();
         buzz(n >= total ? 40 : 10);
       });
-      rs.addEventListener('click', function (e) { e.stopPropagation(); n = 0; draw(); save(); });
+      rs.addEventListener('click', function (e) { e.stopPropagation(); n = 0; draw(); });
       draw();
     })(rows[i], i);
   })();
