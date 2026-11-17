@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>سورة الواقعة — مغناطيس الأرزاق</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Amiri+Quran&family=Aref+Ruqaa:wght@400;700&display=swap">
+<style>
+  /* Surah page: text is fetched live from public Quran APIs and shown as received. */
+  :root {
+    --bg: #0c1215;
+    --bar: #0f171b;
+    --line: #223038;
+    --fg: #d3cec3;
+    --fg-strong: #ebe6da;
+    --fg-soft: #98a4a4;
+    --gold: #c8aa6e;
+    --gold-dim: #8c7747;
+    --ok: #8fd0a0;
+    --warn: #e0a36a;
+    --fs: 19px;
+    --font-body: "Amiri", "Noto Naskh Arabic", "Traditional Arabic", serif;
+    --font-quran: "Amiri Quran", "Amiri", "Noto Naskh Arabic", serif;
+    --font-display: "Aref Ruqaa", "Amiri", serif;
+    color-scheme: dark;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #f2f3ef; --bar: #e9ebe6; --line: #cfd4cc;
+      --fg: #26343a; --fg-strong: #0f1c21; --fg-soft: #5a6a6c;
+      --gold: #7a5c14; --gold-dim: #a58a4a; --ok: #2e7d4f; --warn: #9a5a14;
+      color-scheme: light;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #f2f3ef; --bar: #e9ebe6; --line: #cfd4cc;
+    --fg: #26343a; --fg-strong: #0f1c21; --fg-soft: #5a6a6c;
+    --gold: #7a5c14; --gold-dim: #a58a4a; --ok: #2e7d4f; --warn: #9a5a14;
+    color-scheme: light;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    direction: rtl;
+    font-family: var(--font-body);
+    font-size: var(--fs);
+    line-height: 2.1;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0 0 auto;
+    height: env(safe-area-inset-top, 0px);
+    background: var(--bar);
+    z-index: 30;
+  }
+  .gut {
+    max-width: 40rem;
+    margin-inline: auto;
+    padding-left: max(18px, env(safe-area-inset-left, 0px));
+    padding-right: max(18px, env(safe-area-inset-right, 0px));
+  }
+
+  .bar {
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 20;
+    background: var(--bar);
+    border-bottom: 1px solid var(--line);
+  }
+  .bar .gut { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 52px; }
+  .back {
+    display: inline-flex; align-items: center; gap: 8px;
+    color: var(--gold); text-decoration: none; min-height: 44px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .back svg { width: 22px; height: 22px; flex: none; }
+  .back:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 8px; }
+  .bar-title {
+    font-family: var(--font-display); font-weight: 700; font-size: 22px;
+    line-height: 1.3; color: var(--gold); margin: 0; white-space: nowrap;
+  }
+  .bar-actions { display: flex; align-items: center; gap: 12px; }
+  .theme {
+    appearance: none; display: inline-flex; align-items: center; justify-content: center;
+    width: 44px; height: 40px; padding: 0; border: 1px solid var(--line);
+    background: transparent; color: var(--fg); border-radius: 10px; cursor: pointer;
+  }
+  .theme:active { background: var(--line); }
+  .theme:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .theme svg { width: 20px; height: 20px; display: block; }
+  .theme .ico-moon { display: none; }
+  :root[data-theme="light"] .theme .ico-sun { display: none; }
+  :root[data-theme="light"] .theme .ico-moon { display: block; }
+  .sizer { display: flex; gap: 8px; }
+  .sizer button {
+    appearance: none; min-width: 44px; height: 40px; border: 1px solid var(--line);
+    background: transparent; color: var(--fg); font-family: var(--font-body);
+    border-radius: 10px; cursor: pointer; line-height: 1; padding: 0 10px;
+  }
+  .sizer button:active { background: var(--line); }
+  .sizer button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .sizer button[disabled] { opacity: .35; cursor: default; }
+  .sizer .s-small { font-size: 17px; }
+  .sizer .s-large { font-size: 26px; }
+  .progress { height: 2px; background: transparent; }
+  .progress i { display: block; height: 100%; background: var(--gold); transform: scaleX(0); transform-origin: right center; }
+  @media (max-width: 440px) {
+    .bar-title { font-size: 20px; }
+    .sizer button { min-width: 38px; padding: 0 6px; }
+    .theme { width: 38px; }
+    .bar-actions { gap: 8px; }
+  }
+
+  main { padding-block: 28px 72px; }
+  .basmala {
+    font-family: var(--font-quran); font-size: 1.5em; line-height: 1.9;
+    color: var(--gold); text-align: center; margin: 0 0 18px;
+  }
+  .surah-name {
+    font-family: var(--font-display); font-weight: 700; text-align: center;
+    font-size: clamp(2rem, 10vw, 2.8rem); line-height: 1.5; color: var(--gold); margin: 0 0 8px;
+  }
+  .meta-line { text-align: center; color: var(--fg-soft); font-size: .78em; margin: 0 0 22px; }
+
+  .verses {
+    font-family: var(--font-quran);
+    font-size: 1.2em;
+    line-height: 2.7;
+    color: var(--fg-strong);
+    text-align: justify;
+    text-justify: inter-word;
+    margin: 0;
+  }
+  .vn {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 1.9em; height: 1.9em; padding: 0 .25em;
+    margin-inline: .35em;
+    border: 1px solid var(--gold-dim); border-radius: 999px;
+    color: var(--gold); font-family: var(--font-body); font-size: .56em;
+    line-height: 1; vertical-align: middle; font-weight: 700;
+  }
+
+  .state { text-align: center; color: var(--fg-soft); padding: 40px 0; }
+  .state[hidden], .verses[hidden], .basmala[hidden] { display: none; }
+  .err { border: 1px solid var(--line); border-radius: 14px; padding: 22px 18px; text-align: center; }
+  .err p { margin: 0 0 12px; }
+  .err .why { color: var(--fg-soft); font-size: .8em; }
+  .btn {
+    appearance: none; display: inline-block; min-height: 44px; padding: 0 24px;
+    border: 1px solid var(--gold-dim); background: transparent; color: var(--gold);
+    font-family: var(--font-body); font-size: .9em; font-weight: 700; border-radius: 999px;
+    cursor: pointer; text-decoration: none; line-height: 42px;
+  }
+  .btn:active { background: var(--line); }
+  .btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+  .foot { margin-top: 36px; padding-top: 22px; border-top: 1px solid var(--line); text-align: center; font-size: .78em; color: var(--fg-soft); line-height: 2; }
+  .foot p { margin: 0 0 .4em; }
+  .foot a { color: var(--gold); }
+  .check.ok { color: var(--ok); }
+  .check.warn { color: var(--warn); }
+  .back-bottom { margin-top: 26px; text-align: center; }
+</style>
+<script>
+  try {
+    var t0 = localStorage.getItem('arzaq-theme');
+    document.documentElement.setAttribute('data-theme', t0 === 'light' ? 'light' : 'dark');
+  } catch (e) { document.documentElement.setAttribute('data-theme', 'dark'); }
+</script>
+
+<style>
+  /* standalone reset (the artifact viewer normally supplies this) */
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; }
+  img { max-width: 100%; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="gut">
+    <a class="back" href="./" aria-label="العودة إلى مغناطيس الأرزاق">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+      <span class="bar-title">سورة الواقعة</span>
+    </a>
+    <div class="bar-actions">
+      <button type="button" id="theme" class="theme" aria-pressed="false" aria-label="الوضع الفاتح">
+        <svg class="ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg>
+        <svg class="ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+      </button>
+      <div class="sizer" role="group" aria-label="حجم الخط">
+        <button type="button" id="smaller" class="s-small" aria-label="تصغير الخط">أ</button>
+        <button type="button" id="larger" class="s-large" aria-label="تكبير الخط">أ</button>
+      </div>
+    </div>
+  </div>
+  <div class="progress" aria-hidden="true"><i id="bar"></i></div>
+</div>
+
+<main class="gut" dir="rtl" lang="ar">
+  <h1 class="surah-name">سورة الواقعة</h1>
+  <p class="meta-line">٩٦ آية</p>
+
+  <div id="loading" class="state" role="status">جارٍ تحميل السورة…</div>
+
+  <div id="error" class="state err" role="alert" hidden>
+    <p>تعذّر تحميل السورة.</p>
+    <p class="why" id="why"></p>
+    <button type="button" id="retry" class="btn">إعادة المحاولة</button>
+  </div>
+
+  <p id="basmala" class="basmala" hidden></p>
+  <p id="verses" class="verses" hidden></p>
+
+  <footer class="foot">
+    <p id="check" class="check" role="status"></p>
+    <p>النص يُجلب مباشرة من مصادر قرآنية عامة ويُعرض كما ورد دون أي تعديل، ولا يُحفظ في هذا الموقع.</p>
+    <p>المصدر الأساسي: <a href="https://alquran.cloud" target="_blank" rel="noopener">AlQuran Cloud</a> · المقارنة: <a href="https://quran.com" target="_blank" rel="noopener">Quran.com</a></p>
+    <div class="back-bottom"><a class="btn" href="./">العودة إلى مغناطيس الأرزاق</a></div>
+  </footer>
+</main>
+
+<script>
+(function () {
+  var N = 56, COUNT = 96, KEY = 'arzaq-quran-' + N;
+  var PRIMARY = 'https://api.alquran.cloud/v1/surah/' + N + '/quran-uthmani';
+  var SECOND = 'https://api.quran.com/api/v4/verses/by_chapter/' + N + '?fields=text_uthmani&per_page=50&page=';
+  var AR = '٠١٢٣٤٥٦٧٨٩';
+  function ar(x) { return String(x).replace(/\d/g, function (d) { return AR[d]; }); }
+
+  /* ---------- shared look: font size, theme, progress ---------- */
+  var root = document.documentElement;
+  var MIN = 17, MAX = 32, STEP = 2, DEF = 19, size = DEF;
+  try { var sv = parseInt(localStorage.getItem('arzaq-fs2'), 10); if (sv >= MIN && sv <= MAX) size = sv; } catch (e) {}
+  var smaller = document.getElementById('smaller'), larger = document.getElementById('larger'), bar = document.getElementById('bar');
+  function apply() {
+    root.style.setProperty('--fs', size + 'px');
+    smaller.disabled = size <= MIN; larger.disabled = size >= MAX;
+    update();
+  }
+  function saveSize() { try { localStorage.setItem('arzaq-fs2', String(size)); } catch (e) {} }
+  smaller.addEventListener('click', function () { size = Math.max(MIN, size - STEP); apply(); saveSize(); });
+  larger.addEventListener('click', function () { size = Math.min(MAX, size + STEP); apply(); saveSize(); });
+  var themeBtn = document.getElementById('theme');
+  function setTheme(t, save) {
+    root.setAttribute('data-theme', t);
+    themeBtn.setAttribute('aria-pressed', t === 'light' ? 'true' : 'false');
+    themeBtn.setAttribute('aria-label', t === 'light' ? 'الوضع الداكن' : 'الوضع الفاتح');
+    if (save) { try { localStorage.setItem('arzaq-theme', t); } catch (e) {} }
+  }
+  setTheme(root.getAttribute('data-theme') === 'light' ? 'light' : 'dark', false);
+  themeBtn.addEventListener('click', function () { setTheme(root.getAttribute('data-theme') === 'light' ? 'dark' : 'light', true); });
+  var ticking = false;
+  function update() {
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    var p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+    bar.style.transform = 'scaleX(' + p + ')';
+    ticking = false;
+  }
+  window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+  window.addEventListener('resize', update);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(update);
+  apply();
+
+  /* ---------- Quran text ---------- */
+  var elLoading = document.getElementById('loading'), elError = document.getElementById('error'),
+      elWhy = document.getElementById('why'), elBism = document.getElementById('basmala'),
+      elVerses = document.getElementById('verses'), elCheck = document.getElementById('check');
+
+  /* letters only, for comparing two sources that may differ in diacritics or marks */
+  function norm(s) {
+    return String(s)
+      .replace(/[ـً-ٰٟۖ-ۭ࣓-ࣿ]/g, '')
+      .replace(/[ٱآأإ]/g, 'ا')
+      .replace(/[ىی]/g, 'ي')
+      .replace(/ک/g, 'ك')
+      .replace(/[^ء-غف-ي]/g, '');
+  }
+  var BISM_NORM = norm('بسم الله الرحمن الرحيم');
+
+  function getJSON(url, ms) {
+    var ctl = window.AbortController ? new AbortController() : null;
+    var timer = setTimeout(function () { if (ctl) ctl.abort(); }, ms);
+    return fetch(url, ctl ? { signal: ctl.signal } : undefined).then(function (r) {
+      clearTimeout(timer);
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    }, function (e) { clearTimeout(timer); throw e; });
+  }
+
+  /* every verse must be there, in order, with real text */
+  function valid(verses) {
+    if (!Array.isArray(verses) || verses.length !== COUNT) return false;
+    for (var i = 0; i < verses.length; i++) {
+      if (verses[i].n !== i + 1 || typeof verses[i].t !== 'string' || !verses[i].t.trim()) return false;
+    }
+    return true;
+  }
+
+  /* some editions put the basmala in front of verse 1; show it as the header, text itself is not altered */
+  function splitBism(verses) {
+    var out = { bism: '', verses: verses };
+    var words = verses[0].t.trim().split(/\s+/);
+    if (words.length > 4 && norm(words.slice(0, 4).join(' ')) === BISM_NORM) {
+      out.bism = words.slice(0, 4).join(' ');
+      out.verses = verses.map(function (v, i) { return i === 0 ? { n: 1, t: words.slice(4).join(' ') } : v; });
+    }
+    return out;
+  }
+
+  function fetchPrimary() {
+    return getJSON(PRIMARY, 12000).then(function (j) {
+      var d = j && j.data;
+      if (!d || !Array.isArray(d.ayahs)) throw new Error('شكل البيانات غير متوقع');
+      var verses = d.ayahs.map(function (a) { return { n: a.numberInSurah, t: a.text }; });
+      if (!valid(verses)) throw new Error('عدد الآيات غير مطابق (المتوقع ' + ar(COUNT) + ')');
+      return splitBism(verses);
+    });
+  }
+
+  function fetchSecond() {
+    var all = [];
+    function page(p) {
+      return getJSON(SECOND + p, 12000).then(function (j) {
+        if (!j || !Array.isArray(j.verses)) throw new Error('shape');
+        j.verses.forEach(function (v) { all.push({ n: v.verse_number, t: v.text_uthmani }); });
+        var next = j.pagination && j.pagination.next_page;
+        if (next && p < 6) return page(next);
+      });
+    }
+    return page(1).then(function () { return all; });
+  }
+
+  function readCache() {
+    try {
+      var c = JSON.parse(localStorage.getItem(KEY));
+      if (c && valid(c.verses) && typeof c.bism === 'string') return c;
+    } catch (e) {}
+    return null;
+  }
+  function writeCache(d) {
+    try { localStorage.setItem(KEY, JSON.stringify({ bism: d.bism, verses: d.verses, at: Date.now() })); } catch (e) {}
+  }
+
+  var shown = '';
+  function render(d) {
+    var sig = JSON.stringify([d.bism, d.verses]);
+    if (sig === shown) return;
+    shown = sig;
+    elBism.textContent = d.bism || 'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ';
+    elBism.hidden = false;
+    var frag = document.createDocumentFragment();
+    d.verses.forEach(function (v) {
+      frag.appendChild(document.createTextNode(v.t + ' '));
+      var s = document.createElement('span');
+      s.className = 'vn';
+      s.textContent = ar(v.n);
+      frag.appendChild(s);
+      frag.appendChild(document.createTextNode(' '));
+    });
+    elVerses.textContent = '';
+    elVerses.appendChild(frag);
+    elVerses.hidden = false;
+    elLoading.hidden = true;
+    elError.hidden = true;
+    update();
+  }
+
+  function setCheck(cls, msg) { elCheck.className = 'check ' + cls; elCheck.textContent = msg; }
+
+  function crossCheck(d) {
+    setCheck('', 'جارٍ مطابقة النص مع مصدر ثانٍ…');
+    fetchSecond().then(function (other) {
+      if (other.length !== COUNT) throw new Error('count');
+      var bad = [];
+      for (var i = 0; i < COUNT; i++) {
+        if (!other[i] || other[i].n !== d.verses[i].n || norm(other[i].t) !== norm(d.verses[i].t)) bad.push(d.verses[i].n);
+      }
+      if (!bad.length) setCheck('ok', 'تمت مطابقة جميع الآيات (' + ar(COUNT) + ') مع مصدرين مستقلين ✓');
+      else setCheck('warn', 'اختلف المصدران في رسم الآيات: ' + bad.map(ar).join('، ') + ' — يُرجى الرجوع إلى المصحف للتأكد.');
+    }).catch(function () {
+      setCheck('', 'عدد الآيات مطابق (' + ar(COUNT) + ')، وتعذّرت المطابقة مع المصدر الثاني الآن.');
+    });
+  }
+
+  var cached = readCache();
+  if (cached) render(cached);
+
+  function load() {
+    if (!cached) { elLoading.hidden = false; elError.hidden = true; }
+    fetchPrimary().then(function (d) {
+      writeCache(d);
+      cached = d;
+      render(d);
+      crossCheck(d);
+    }).catch(function (e) {
+      if (cached) {
+        setCheck('warn', 'تعذّر تحديث النص الآن، يُعرض آخر نص محفوظ في متصفحك.');
+      } else {
+        elLoading.hidden = true;
+        elWhy.textContent = (navigator.onLine === false ? 'لا يوجد اتصال بالإنترنت.' : 'تحقق من الاتصال ثم أعد المحاولة.') + ' (' + (e && e.message ? e.message : 'خطأ') + ')';
+        elError.hidden = false;
+      }
+    });
+  }
+  document.getElementById('retry').addEventListener('click', load);
+  load();
+})();
+</script>
+</body>
+</html>
