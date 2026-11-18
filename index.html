@@ -299,7 +299,7 @@
   /* Links to the surah pages: whole row is tappable */
   ul.awrad > li.has-link { display: flex; align-items: center; gap: 12px; -webkit-tap-highlight-color: transparent; }
   ul.awrad > li.has-link > p { flex: 1; min-width: 0; }
-  ul.awrad > li.has-link::after { content: "\2039"; color: var(--gold); font-size: 1.6em; line-height: 1; padding-inline-end: 6px; }
+  ul.awrad > li.has-link::after { content: "\2039"; direction: ltr; unicode-bidi: isolate; color: var(--gold); font-size: 1.6em; line-height: 1; padding-inline-end: 6px; }
   .surah-link { color: var(--gold); text-decoration: none; }
   .surah-link::before { content: ""; position: absolute; inset: 0; }
   .surah-link:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 6px; }
