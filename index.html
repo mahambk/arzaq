@@ -296,11 +296,14 @@
   li.done .ring .n { color: var(--done); }
   @media (prefers-reduced-motion: reduce) { .ring, .ring .arc { transition: none; } }
 
+  :root { --link: #7fb3d5; --link-line: #4d7a99; }
+  @media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) { --link: #1f5f8b; --link-line: #7fa6c0; } }
+  :root[data-theme="light"] { --link: #1f5f8b; --link-line: #7fa6c0; }
   /* Links to the surah pages: whole row is tappable */
   ul.awrad > li.has-link { display: flex; align-items: center; gap: 12px; -webkit-tap-highlight-color: transparent; }
   ul.awrad > li.has-link > p { flex: 1; min-width: 0; }
   ul.awrad > li.has-link::after { content: "\2039"; color: var(--gold); font-size: 1.6em; line-height: 1; padding-inline-end: 6px; }
-  .surah-link { color: inherit; text-decoration: none; }
+  .surah-link { color: var(--link); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .3em; text-decoration-color: var(--link-line); }
   .surah-link::before { content: ""; position: absolute; inset: 0; }
   .surah-link:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 6px; }
   ul.awrad > li.has-link:active { background: var(--line); }
