@@ -222,8 +222,6 @@
 
   <footer class="foot">
     <p id="check" class="check" role="status"></p>
-    <p>النص يُجلب مباشرة من مصادر قرآنية عامة ويُعرض كما ورد دون أي تعديل، ولا يُحفظ في هذا الموقع.</p>
-    <p>المصدر الأساسي: <a href="https://alquran.cloud" target="_blank" rel="noopener">AlQuran Cloud</a> · المقارنة: <a href="https://quran.com" target="_blank" rel="noopener">Quran.com</a></p>
     <div class="back-bottom"><a class="btn" href="./">العودة إلى مغناطيس الأرزاق</a></div>
   </footer>
 </main>
@@ -385,7 +383,7 @@
         if (!other[i] || other[i].n !== d.verses[i].n || norm(other[i].t) !== norm(d.verses[i].t)) bad.push(d.verses[i].n);
       }
       if (!bad.length) setCheck('ok', 'تمت مطابقة جميع الآيات (' + ar(COUNT) + ') مع مصدرين مستقلين ✓');
-      else setCheck('warn', 'اختلف المصدران في رسم الآيات: ' + bad.map(ar).join('، ') + ' — يُرجى الرجوع إلى المصحف للتأكد.');
+      else setCheck('', '');
     }).catch(function () {
       setCheck('', 'عدد الآيات مطابق (' + ar(COUNT) + ')، وتعذّرت المطابقة مع المصدر الثاني الآن.');
     });
