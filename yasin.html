@@ -221,7 +221,6 @@
   <p id="verses" class="verses" hidden></p>
 
   <footer class="foot">
-    <p id="check" class="check" role="status"></p>
     <div class="back-bottom"><a class="btn" href="./">العودة إلى مغناطيس الأرزاق</a></div>
   </footer>
 </main>
@@ -271,7 +270,7 @@
   /* ---------- Quran text ---------- */
   var elLoading = document.getElementById('loading'), elError = document.getElementById('error'),
       elWhy = document.getElementById('why'), elBism = document.getElementById('basmala'),
-      elVerses = document.getElementById('verses'), elCheck = document.getElementById('check');
+      elVerses = document.getElementById('verses'), elCheck = null;
 
   /* letters only, for comparing two sources that may differ in diacritics or marks */
   function norm(s) {
@@ -372,7 +371,7 @@
     update();
   }
 
-  function setCheck(cls, msg) { elCheck.className = 'check ' + cls; elCheck.textContent = msg; }
+  function setCheck() {}
 
   function crossCheck(d) {
     setCheck('', 'جارٍ مطابقة النص مع مصدر ثانٍ…');
